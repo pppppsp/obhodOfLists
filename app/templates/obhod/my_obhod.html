@@ -1,0 +1,117 @@
+{% extends '../base.html' %}
+{% load static %}
+{% block title %} Мои обходные листы {% endblock title %}
+{% block content %}
+<div class="container mt-4">
+    {% if myl %}
+        {% with workaround=myl.first %}
+            <a href="{% url 'index' %}" class="btn btn-secondary mb-2">
+                <i class="fa-solid fa-arrow-left"></i>
+                Назад
+            </a>
+
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Мой обходной лист #{{ workaround.id }}</h4>
+                </div>
+                <div class="card-body">
+                    <!-- Основная информация -->
+                    <div class="mb-4">
+                        <h5>Информация:</h5>
+                        <ul class="list-unstyled">
+                            <li><strong>Тип:</strong> {{ workaround.typ.name }}</li>
+                            <li><strong>Статус:</strong> 
+                                <span class="badge 
+                                    {% if workaround.status.name == 'Завершен' %}bg-success
+                                    {% elif workaround.status.name == 'В процессе' %}bg-warning text-dark
+                                    {% elif workaround.status.name == 'Отклонен' %}bg-danger
+                                    {% else %}bg-secondary{% endif %}">
+                                    {{ workaround.status.name }}
+                                </span>
+                            </li>
+                            <li><strong>Дата создания:</strong> {{ workaround.date_of_create|date:"d.m.Y H:i" }}</li>
+                            <li><strong>Дата обновления:</strong> {{ workaround.date_of_update|date:"d.m.Y H:i" }}</li>
+                        </ul>
+                    </div>
+
+                    <!-- Пункты обходного листа -->
+                    <h5>Пункты для подписания:</h5>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>#</th>
+                                    <th>Пункт</th>
+                                    <th>Должность</th>
+                                    <th>Статус</th>
+                                    <th>Подписал/Должен подписать</th>
+                                    <th>Комментарий</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for sheet in workaround.workaroundsheetmodel_set.all|dictsort:"order" %}
+                                <tr>
+                                    <td>{{ sheet.order }}</td>
+                                    <td>{{ sheet.nameofpoint }}</td>
+                                    <td>{{ sheet.depart.name }}</td>
+                                    <td>
+                                        {% if sheet.signaturemodel_set.exists %}
+                                            <span class="badge bg-success">
+                                                <i class="fa-solid fa-check"></i> Подписано
+                                            </span>
+                                        {% else %}
+                                            <span class="badge bg-secondary text-dark text-white">
+                                                <i class="fa-solid fa-clock"></i>
+                                                Ожидание
+                                            </span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if sheet.signaturemodel_set.exists %}
+                                            {{ sheet.signaturemodel_set.first.user.get_full_name }}
+                                        {% else %}
+                                            {% with responsible=sheet.depart.postchildmodel_set.first %}
+                                                {% if responsible %}
+                                                    {{ responsible.user.get_full_name }} ({{ responsible.childpost.name }})
+                                                {% else %}
+                                                    <span class="text-danger">Пока не подписано </span>
+                                                {% endif %}
+                                            {% endwith %}
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if sheet.signaturemodel_set.exists %}
+                                            {{ sheet.signaturemodel_set.first.comment|default:"-" }}
+                                        {% else %}
+                                            -
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="6" class="text-center">Нет пунктов для подписания</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Кнопка экспорта в PDF -->
+                    {% if workaround.status.name == "Завершен" %}
+                        <div class="mt-3">
+                            <a href="{% url 'generate_workaround_pdf' workaround.id %}" class="btn btn-success">
+                                <i class="fa-solid fa-file-pdf"></i>
+                                Экспорт в PDF
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        {% endwith %}
+    {% else %}
+        <div class="alert alert-info" role="alert">
+            У вас пока нет обходного листа.
+        </div>
+    {% endif %}
+</div>
+{% endblock content %}

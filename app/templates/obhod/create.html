@@ -1,0 +1,118 @@
+{% extends '../base.html' %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Создание обходного листа</h2>
+    <form method="post">
+        {% csrf_token %}
+
+        <!-- Основная форма -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="mb-3">
+                    {{ form.user.label_tag }}
+                    {{ form.user }}
+                </div>
+                <div class="mb-3">
+                    {{ form.typ.label_tag }}
+                    {{ form.typ }}
+                </div>
+            </div>
+        </div>
+
+        <!-- Этапы -->
+        <div class="card">
+            <div class="card-header">Этапы подписания</div>
+            <div class="card-body">
+                {{ formset.management_form }}
+                <div id="sheets">
+                    {% for form in formset %}
+                        <div class="sheet-form mb-3 border p-3">
+                            {{ form.as_p }}
+                        </div>
+                    {% endfor %}
+                </div>
+                <button type="button" class="btn btn-secondary" id="add-sheet">+ Добавить этап</button>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-3">Создать</button>
+        <a href="{% url 'profile' %}" class="btn btn-secondary mt-3">
+            <i class="fa-solid fa-arrow-left"></i> Назад
+        </a>
+    </form>
+</div>
+
+<!-- Скрытый шаблон формы -->
+<template id="step-template">
+    <div class="sheet-form mb-3 border p-3">
+        {{ formset.empty_form.as_p|safe }}
+    </div>
+</template>
+
+<!-- Передаём этапы в JS -->
+{{ step_templates|json_script:"step-templates" }}
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const stepTemplates = JSON.parse(document.getElementById('step-templates').textContent);
+    const sheetsContainer = document.getElementById('sheets');
+    const totalForms = document.getElementById('id_sheets-TOTAL_FORMS');
+    const typeSelect = document.getElementById('{{ form.typ.auto_id }}');
+
+    function createStepForm(index, stepName = '') {
+        const template = document.getElementById('step-template');
+        if (!template) return null;
+
+        const newForm = template.content.firstElementChild.cloneNode(true);
+        newForm.innerHTML = newForm.innerHTML.replace(/__prefix__/g, index);
+
+        const textInputs = newForm.querySelectorAll('input[type="text"]');
+        if (textInputs.length > 0) {
+            textInputs[0].value = stepName;
+        }
+
+        return newForm;
+    }
+
+    typeSelect.addEventListener('change', function() {
+        const selectedType = this.value;
+
+        sheetsContainer.innerHTML = '';
+        totalForms.value = 0;
+
+        if (stepTemplates[selectedType]) {
+            stepTemplates[selectedType].forEach(([stepName, stepPk], index) => {
+                const newForm = createStepForm(index, stepName);
+                if (newForm) {
+                    const departSelect = newForm.querySelector('select[name$="-depart"]');
+                    if (departSelect) {
+                        departSelect.value = stepPk;
+                    }
+                    sheetsContainer.appendChild(newForm);
+                    totalForms.value = index + 1;
+                }
+            });
+        }
+    });
+
+    document.getElementById('add-sheet').addEventListener('click', function() {
+        const newIndex = parseInt(totalForms.value);
+        const newForm = createStepForm(newIndex);
+        if (newForm) {
+            sheetsContainer.appendChild(newForm);
+            totalForms.value = newIndex + 1;
+        }
+    });
+
+    sheetsContainer.addEventListener('change', function(e) {
+        if (e.target.tagName === 'SELECT') {
+            const selectedText = e.target.options[e.target.selectedIndex].text;
+            const displayInput = e.target.closest('.sheet-form').querySelector('input[type="text"]');
+            if (displayInput) {
+                displayInput.value = selectedText;
+            }
+        }
+    });
+});
+</script>
+{% endblock %}

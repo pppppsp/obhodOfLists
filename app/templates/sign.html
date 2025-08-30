@@ -1,0 +1,30 @@
+{% extends './base.html' %}{% load static %}{% block title %}Подпись {% endblock title %}
+{% block scripts %}
+<script src="{% static 'js/profile/js.js' %}"></script>
+{% endblock scripts %}
+{% block content %}
+<div class = 'container mt-5'>
+{% if request.user.signature %}
+    <h2>Твоя подпись</h2>
+    <img class='border mt-2' src='/static/{{signat}}'><br/>
+    <form>
+    <a class='btn btn-outline-primary mt-2 fw-bold ' href="{% url 'sign_delete' %}">
+        Сменить свою подпись
+    </a>
+    </form>
+{% else %}
+<form id="signature-form" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <h2 class='' for="signature_canvas">Подпись:</label></h2>
+    <canvas id="signature_canvas" width="400" height="200" style="border: 1px solid #000;"></canvas><br>
+    <button class="btn btn-primary mt-2" type="button" id="clear_button">Очистить</button><br>
+    <input type="hidden" name="signature_data" id="signature_data">
+    <button class="btn btn-primary mt-2" type="submit">Сохранить</button>
+</form>
+
+{% endif %}
+    <!-- draw_signature.html -->
+
+</div>
+
+{% endblock content %}

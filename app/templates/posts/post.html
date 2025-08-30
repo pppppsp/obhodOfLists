@@ -1,0 +1,92 @@
+{% extends '../base.html' %}
+{% load static %}
+{% block title %} Список должностей {% endblock title %}
+{% block content %}
+<div class="container mt-4">
+    <!-- Форма для поиска и фильтрации -->
+    <form class="row g-2 mb-4 align-items-center" method="get" action="{% url 'admin-filter' %}">
+        <!-- Поле для поиска по фамилии -->
+        <div class="col-auto">
+            <input class="form-control form-control-sm" type="search" name="search" placeholder="Фамилия" value="{{ search_query }}">
+        </div>
+
+        <!-- Фильтр по должностям -->
+        <div class="col-auto">
+            <select class="form-select form-select-sm" name="childpost">
+                <option value="">Все должности</option>
+                {% for childpost in childposts %}
+                    <option value="{{ childpost.id }}" {% if childpost_filter == childpost.id|stringformat:"s" %}selected{% endif %}>
+                        {{ childpost.name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Кнопка поиска -->
+        <div class="col-auto">
+            <button class="btn btn-primary btn-sm" type="submit">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                Найти
+            </button>
+        </div>
+
+        <!-- Кнопка "Назначить" -->
+        <div class="col-auto">
+            <a class="btn btn-warning btn-sm" href="{% url 'admin-assign-post' %}">
+                <i class="fa-solid fa-plus"></i>
+                Назначить в должность
+            </a>
+        </div>
+
+        <!-- Кнопка "Должность" -->
+        <div class="col-auto">
+            <a class="btn btn-success btn-sm" href="{% url 'admin-add-childpost' %}">
+                <i class="fa-solid fa-plus"></i>
+                Должность
+            </a>
+        </div>
+
+        <div class="col-auto">
+            <a href="{% url 'profile' %}" class="btn btn-secondary btn-sm">
+                <i class="fa-solid fa-arrow-left"></i>
+                Назад
+            </a>
+        </div>
+    </form>
+
+    <!-- Таблица с результатами -->
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped table-hover table-sm">
+            <thead class="table-primary">
+                <tr>
+                    <th scope="col">ФИО</th>
+                    <th scope="col">Должность</th>
+                    <th scope="col">Действия</th> <!-- Новая колонка для кнопок -->
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in list_posts %}
+                    <tr>
+                        <td>{{ item.user.last_name }} {{ item.user.first_name }} {{ item.user.patronymic }}</td>
+                        <td>{{ item.childpost.name }}</td>
+                        <td>
+                            <!-- Кнопка редактирования -->
+                            <a href="{% url 'admin-edit-post' item.id %}" class="btn btn-sm btn-warning" title="Редактировать">
+                                <i class="fa-solid fa-pencil"></i>
+                            </a>
+                            <!-- Кнопка удаления -->
+                            <a href="{% url 'admin-del-childpost-user' item.id %}" class="btn btn-sm btn-danger" title="Удалить" onclick="return confirm('Вы уверены, что хотите снять данного пользователя с должности?');">
+                                <i class="fa-solid fa-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center">Ничего не найдено</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock content %}

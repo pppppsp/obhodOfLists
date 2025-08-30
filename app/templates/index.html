@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+
+{% block title %}Главная страница{% endblock title %}
+
+{% block content %}
+    <!-- Герой-секция -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="hero-content animate__animated animate__fadeIn">
+                <h1 class="display-4">Добро пожаловать в систему обходных листов!</h1>
+                <p class="lead">Упростите процесс оформления и подписания обходных листов с нашей удобной платформой.</p>
+                <div class="mt-4">
+                    {% if request.user.is_authenticated %}
+                        <a href="{% url 'myobhod' %}" class="btn btn-light btn-lg me-3">
+                            <i class="fas fa-file-alt"></i> Мой обходной лист
+                        </a>
+                    {% else %}
+                        <a href="{% url 'login' %}" class="btn btn-light btn-lg me-3">
+                            <i class="fas fa-sign-in-alt"></i> Войти
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Секция статистики -->
+    <section class="stats-section py-5 bg-light">
+        <div class="container">
+            <h2 class="text-center mb-5">Статистика</h2>
+            <div class="row">
+                <!-- Карточка 1: Количество пользователей -->
+                <div class="col-md-3 text-center">
+                    <div class="card h-100 border-0 shadow-sm animate__animated animate__fadeInUp">
+                        <div class="card-body">
+                            <i class="fas fa-users fa-3x text-primary mb-3"></i>
+                            <h3 class="card-title">{{ user_count }}</h3>
+                            <p class="card-text">Пользователей</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Карточка 2: Количество обходных листов -->
+                <div class="col-md-3 text-center">
+                    <div class="card h-100 border-0 shadow-sm animate__animated animate__fadeInUp animate__delay-1s">
+                        <div class="card-body">
+                            <i class="fas fa-file-alt fa-3x text-primary mb-3"></i>
+                            <h3 class="card-title">{{ workaround_count }}</h3>
+                            <p class="card-text">Обходных листов</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Карточка 3: Количество завершенных обходных листов -->
+                <div class="col-md-3 text-center">
+                    <div class="card h-100 border-0 shadow-sm animate__animated animate__fadeInUp animate__delay-2s">
+                        <div class="card-body">
+                            <i class="fas fa-check-circle fa-3x text-primary mb-3"></i>
+                            <h3 class="card-title">{{ completed_workaround_count }}</h3>
+                            <p class="card-text">Завершено</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Карточка 4: Количество отделений -->
+                <div class="col-md-3 text-center">
+                    <div class="card h-100 border-0 shadow-sm animate__animated animate__fadeInUp animate__delay-3s">
+                        <div class="card-body">
+                            <i class="fas fa-building fa-3x text-primary mb-3"></i>
+                            <h3 class="card-title">{{ department_count }}</h3>
+                            <p class="card-text">Отделений</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Секция преимуществ -->
+    <section class="features-section py-5">
+        <div class="container">
+            <h2 class="text-center mb-5">Почему выбирают нас?</h2>
+            <div class="row">
+                <!-- Карточка 1 -->
+                <div class="col-md-4 text-center">
+                    <div class="card h-100 border-0 shadow-sm animate__animated animate__fadeInUp">
+                        <div class="card-body">
+                            <i class="fas fa-check-circle fa-3x text-primary mb-3"></i>
+                            <h3 class="card-title">Удобство</h3>
+                            <p class="card-text">Простое и интуитивно понятное оформление обходных листов.</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Карточка 2 -->
+                <div class="col-md-4 text-center">
+                    <div class="card h-100 border-0 shadow-sm animate__animated animate__fadeInUp animate__delay-1s">
+                        <div class="card-body">
+                            <i class="fas fa-shield-alt fa-3x text-primary mb-3"></i>
+                            <h3 class="card-title">Безопасность</h3>
+                            <p class="card-text">Ваши данные защищены с использованием современных технологий.</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Карточка 3 -->
+                <div class="col-md-4 text-center">
+                    <div class="card h-100 border-0 shadow-sm animate__animated animate__fadeInUp animate__delay-2s">
+                        <div class="card-body">
+                            <i class="fas fa-headset fa-3x text-primary mb-3"></i>
+                            <h3 class="card-title">Поддержка</h3>
+                            <p class="card-text">Наша команда всегда готова помочь вам с любыми вопросами.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Призыв к действию -->
+    <section class="cta-section bg-light py-5">
+        <div class="container text-center">
+            <h2 class="mb-4">Готовы начать?</h2>
+            <p class="lead mb-4">Присоединяйтесь к нашей платформе прямо сейчас и упростите процесс оформления обходных листов.</p>
+            {% if request.user.is_authenticated %}
+                <a href="{% url 'myobhod' %}" class="btn btn-primary btn-lg">
+                    <i class="fas fa-file-alt"></i> Перейти к обходному листу
+                </a>
+            {% else %}
+                <a href="{% url 'login' %}" class="btn btn-outline-primary btn-lg">
+                    <i class="fas fa-sign-in-alt"></i> Войти
+                </a>
+            {% endif %}
+        </div>
+    </section>
+{% endblock content %}

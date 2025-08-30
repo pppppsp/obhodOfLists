@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} Создание пользователя {% endblock title %}
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var departmentSelect = document.querySelector('#id_department');
+        var roleSelect = document.querySelector('#id_role');
+        var childpostField = document.querySelector('#childpost-field');
+
+        function loadRolesForDepartment(departmentId) {
+            fetch(`/get_roles/?department_id=${departmentId}`)
+                .then(response => response.json())
+                .then(data => {
+                    roleSelect.innerHTML = "";  // Очищаем список ролей
+                    data.roles.forEach(role => {
+                        var option = new Option(role.name, role.id);
+                        roleSelect.add(option);
+                    });
+                });
+        }
+
+        function toggleChildpostField() {
+            var selectedOption = roleSelect.options[roleSelect.selectedIndex]?.text;
+            if (selectedOption && selectedOption.trim() === "Ответственный") {
+                childpostField.style.display = 'block';
+            } else {
+                childpostField.style.display = 'none';
+            }
+        }
+
+        departmentSelect.addEventListener('change', function() {
+            loadRolesForDepartment(departmentSelect.value);
+        });
+
+        roleSelect.addEventListener('change', toggleChildpostField);
+    });
+</script>
+<script src="{% static 'js/login/ds.js' %}"></script>
+ 
+{% endblock scripts %}
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <h2 class="text-center mb-4">Создание нового пользователя</h2>
+            
+            <form method="post" action="{% url 'admin_create_user' %}">
+                {% csrf_token %}
+                {% if msg %}
+                    <p class="text-success fs-4">{{msg}}</p>
+                {% else %}
+                    <p class="text-danger fs-4">Вы еще не создали пользователя</p>
+                {% endif %}
+                <!-- Поле для имени -->
+                <div class="form-group">
+                    <label for="id_first_name">Имя</label>
+                    {{ form.first_name }}
+                </div>
+                <!-- Поле для фамилии -->
+                <div class="form-group">
+                    <label for="id_last_name">Фамилия</label>
+                    {{ form.last_name }}
+                </div>
+                <!-- Поле для отчества -->
+                <div class="form-group">
+                    <label for="id_patronymic">Отчество</label>
+                    {{ form.patronymic }}
+                </div>
+                <div class="form-group">
+                    <label for="id_department">Отделение</label>
+                    {{ form.department }}
+                </div>
+                
+                <div class="form-group">
+                    <label for="id_role">Роль</label>
+                    {{ form.role }}
+                </div>
+                
+                <div class="form-group" id="childpost-field" style="display: none;">
+                    <label for="id_childpost">Должность</label>
+                    {{ form.childpost }}
+                </div>
+                
+                <!-- Поле для логина -->
+                <div class="form-group">
+                    <label for="id_username">Логин</label>
+                    {{ form.username }}
+                </div>
+                <!-- Поле для email -->
+                <div class="form-group">
+                    <label for="id_email">Почта</label>
+                    {{ form.email }}
+                </div>
+                <!-- Поле для даты рождения -->
+                <div class="form-group">
+                    <label for="id_birthday_date">Дата рождения</label>
+                    {{ form.birthday_date }}
+                </div>
+                <!-- Поле для пароля -->
+                <div class="form-group">
+                    <label for="id_password1">Пароль</label>
+                    {{ form.password1 }}
+                </div>
+                <!-- Поле для повторения пароля -->
+                <div class="form-group">
+                    <label for="id_password2">Повторите пароль</label>
+                    {{ form.password2 }}
+                </div>
+                <!-- Кнопка отправки формы -->
+                <button type="submit" class="btn btn-primary btn-block">Создать пользователя</button>
+                <button type="clear" class="btn btn-primary btn-block">Очистить</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Скрипт для динамического отображения поля "Должность" -->
+
+{% endblock content %}

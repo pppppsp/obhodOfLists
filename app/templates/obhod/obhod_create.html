@@ -1,0 +1,19 @@
+{% extends '../base.html' %}{% load static %}{% block title %} Подписание обходной {% endblock title %}
+{% block content %}
+<div class= 'container mt-5'>
+    <form class="m-4 shadow p-5 d-flex flex-column mx-auto" method="POST" style="width: 450px;" action="{% url 'signobhod'  %}" >
+        {% if error %}
+            <span class="text-danger fw-bold">Ошибка: {{ error }}</span> 
+        {% endif %}
+        <input type="hidden" name="id_sign" value = "{{ id }}">
+        <div class="c">
+            <input type="checkbox" name="check" id="id_check">
+            <span>Подписать</span>
+        </div>
+     
+        {% csrf_token %}
+        <textarea class="mt-2 form-control" name="comment" id="id_comment" rows="10" placeholder="Ваш комментарий..." style="resize:none;"></textarea>
+        <button class="btn btn-primary mx-auto mt-2" style="width:150px;">Подписать</button>
+    </form>
+</div>
+{% endblock content %}

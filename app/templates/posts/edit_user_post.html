@@ -1,0 +1,44 @@
+{% extends '../base.html' %}{% load static %}{% block title %} Список должностей {% endblock title %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Редактировать должность пользователя</h2>
+    <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            {{ form.user.label_tag }}
+            {{ form.user }}
+            {% if form.user.errors %}
+                <div class="text-danger">
+                    {{ form.user.errors }}
+                </div>
+            {% endif %}
+        </div>
+        <div class="mb-3">
+            {{ form.post.label_tag }}
+            {{ form.post }}
+            {% if form.post.errors %}
+                <div class="text-danger">
+                    {{ form.post.errors }}
+                </div>
+            {% endif %}
+        </div>
+        <div class="mb-3">
+            {{ form.childpost.label_tag }}
+            {{ form.childpost }}
+            {% if form.childpost.errors %}
+                <div class="text-danger">
+                    {{ form.childpost.errors }}
+                </div>
+            {% endif %}
+        </div>
+        <button type="submit" class="btn btn-primary">
+            <i class="fa-solid fa-save"></i>
+            Сохранить изменения
+        </button>
+        <a href="{% url 'admin-filter' %}" class="btn btn-secondary">
+            <i class="fa-solid fa-arrow-left"></i>
+            Назад
+        </a>
+    </form>
+</div>
+{% endblock content %}

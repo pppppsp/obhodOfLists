@@ -1,0 +1,64 @@
+{% extends '../base.html' %}{% load static %}{% block title %} Список должностей {% endblock title %}
+{% block content %}
+<div class="container mt-3">
+    <div class="container mt-4">
+        <h2>Добавить новую должность</h2>
+        <form method="post">
+            {% csrf_token %}
+            <div class="mb-3">
+                {{ form.name.label_tag }}
+                {{ form.name }}
+                <br/>
+                    {{ form.type_for_list.label_tag }}
+                {{ form.type_for_list}}
+                {% if form.name.errors %}
+                    <div class="text-danger">
+                        {{ form.name.errors }}
+                    </div>
+                {% endif %}
+            </div>
+            <button type="submit" class="btn btn-primary">
+                <i class="fa-solid fa-save"></i>
+                Сохранить
+            </button>
+            <a href="{% url 'admin-filter' %}" class="btn btn-secondary">
+                <i class="fa-solid fa-arrow-left"></i>
+                Назад
+            </a>
+        </form>
+    </div>
+
+    <div class="table-responsive mt-2 d-flex justify-content-center">
+        <table class="table table-bordered table-striped table-hover" style="width: 40%;">
+            <thead class="table-primary">
+                <tr>
+                    <th scope="col">Название</th>
+                    <th scope="col">Тип обходного</th>
+                    <th scope="col">Дейсвия
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in childposts %}
+                    <tr>
+                        <td>{{ item.name }}</td>
+                        <td>
+                            {{ item.type_for_list}}
+                        </td>
+                        <td>
+                            <a href="{% url 'admin-del-childpost' item.id %}" class="btn btn-sm btn-danger" title="Удалить" onclick="return confirm('Вы уверены, что хотите удалить эту должность?');">
+                                <i class="fa-solid fa-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+    
+                {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center">Ничего не найдено</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock content %}

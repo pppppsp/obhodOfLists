@@ -1,0 +1,20 @@
+{% extends '../base.html' %}
+{% load static %}
+{% block title %} Список пользователей {% endblock title %}
+{% block content %}
+<div class="container mt-3">
+    <h2>Редактировать пользователя</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">
+            <i class="fa-solid fa-save"></i>
+            Сохранить
+        </button>
+        <a href="{% url 'user-list' %}" class="btn btn-secondary">
+            <i class="fa-solid fa-arrow-left"></i>
+            Назад
+        </a>
+    </form>
+</div>
+{% endblock content %}

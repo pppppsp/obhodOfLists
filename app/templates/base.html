@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
+    <!-- Animate.css -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'css/custom.css' %}">
+    <title>{% block title %}Главная страница{% endblock title %}</title>
+    <style>
+        /* Flexbox для фиксированного футера */
+        html, body {
+            height: 100%;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+        }
+        .content {
+            flex: 1;
+        }
+        /* Стили для герой-секции */
+        .hero-section {
+            height: 500px;
+            background: url('{% static "images/pngtree-pile-of-paper-and-papers-at-an-office-table-image_2522312.jpg" %}') no-repeat center center/cover;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+        }
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5); /* Затемнение фона */
+        }
+        .hero-section h1 {
+            font-size: 3.5rem;
+            font-weight: bold;
+            animation: fadeInDown 1.5s ease-in-out;
+        }
+        .hero-section p {
+            font-size: 1.5rem;
+            animation: fadeInUp 1.5s ease-in-out;
+        }
+        .hero-section .btn {
+            animation: fadeIn 2s ease-in-out;
+        }
+
+        /* Анимации */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Хедер -->
+    <header class="bg-light shadow-sm">
+        <div class="container">
+            <nav class="navbar navbar-expand-lg navbar-light">
+                <!-- Логотип -->
+                <a class="navbar-brand" href="{% url 'index' %}">
+                    <img src="{% static 'images/logo.png' %}" alt="Логотип" width="80">
+                </a>
+
+                <!-- Кнопка для мобильного меню -->
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Навигация -->
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="{% url 'index' %}">Главная</a>
+                        </li>
+                        {% if request.user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'myobhod' %}">Мой обходной лист</a>
+                        </li>
+                        {% endif %}
+                        {% if request.user.role|stringformat:"s" == 'Ответственный' %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'workaround-list' %}">Список листов</a>
+                            </li>
+                        {% else %}
+                           
+                        {% endif %}
+                    </ul>
+
+                    <!-- Правая часть навигации -->
+                    <div class="d-flex align-items-center">
+                        {% if request.user.is_authenticated %}
+                            <span class="navbar-text me-3">Добро пожаловать, {{ request.user.username }}!</span>
+                            <a href="{% url 'profile' %}" class="btn btn-outline-primary me-2">
+                                <i class="fas fa-user"></i> Профиль
+                            </a>
+                            
+                            <form action="{% url 'logout' %}" method="post" class="d-inline">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-outline-danger">
+                                    <i class="fas fa-sign-out-alt"></i> Выйти
+                                </button>
+                            </form>
+                        {% else %}
+                            <a href="{% url 'login' %}" class="btn btn-primary me-2">
+                                <i class="fas fa-sign-in-alt"></i> Войти
+                            </a>
+                            
+                        {% endif %}
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Основной контент -->
+    <main class="content m-2">
+        {% block content %}
+        {% endblock content %}
+    </main>
+
+    <!-- Футер -->
+    <!-- <footer class="footer bg-dark text-white py-4">
+        <div class="container text-center">
+            <p class="mb-0">&copy; 2025 Система обходных листов. Все права защищены.</p>
+            <p class="mb-0">Свяжитесь с нами: <a href="mailto:support@obhod-list.ru" class="text-white">support@obhod-list.ru</a></p>
+        </div>
+    </footer> -->
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Font Awesome JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
+    {% block scripts %}
+    {% endblock scripts %}
+</body>
+</html>

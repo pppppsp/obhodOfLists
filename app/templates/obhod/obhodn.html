@@ -1,0 +1,17 @@
+{% extends '../base.html' %}{% load static %}{% block title %} Подробности {% endblock title %}
+{% block content %}
+<div class= 'container mt-5'>
+    <h1>{{ obj.pk_user.first_name }} {{ obj.pk_user.last_name }} {{ obj.pk_user.patronymic }}</h1>
+    <h3>Обходная:</h3>
+    <div class='d-flex mt-3'>
+        <div class='border mx-2' style='height:500px; width:400px'>
+            <p class='underline text-center text-decoration-underline fs-5'>Обходной лист перед отпуском</p>
+            <p class='underline text-center  fs-6'>(Сдается в приемную кабинет №211)</p>
+        </div>
+        <div>
+            <a href='#'>Добавить пункты</a>
+        </div>
+    </div>
+  
+</div>
+{% endblock content %}

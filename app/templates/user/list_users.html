@@ -1,0 +1,90 @@
+{% extends '../base.html' %}
+{% load static %}
+{% block title %} Список пользователей {% endblock title %}
+{% block content %}
+<div class="container mt-4">
+    <!-- Форма для поиска и фильтрации -->
+    <form class="row g-2 mb-4 align-items-center" method="get" action="{% url 'user-list' %}">
+        <!-- Поле для поиска по фамилии -->
+        <div class="col-auto">
+            {{ form.search }}
+        </div>
+
+        <!-- Фильтр по отделению -->
+        <div class="col-auto">
+            {{ form.department }}
+        </div>
+
+        <!-- Фильтр по роли -->
+        <div class="col-auto">
+            {{ form.role }}
+        </div>
+
+        <!-- Кнопка поиска -->
+        <div class="col-auto">
+            <button class="btn btn-primary btn-sm" type="submit">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                Найти
+            </button>
+        </div>
+
+        <div class="col-auto">
+            <button class="btn btn-danger btn-sm" type="reset" title="Очистить фильтр">
+                <i class="fa-solid fa-trash"></i>
+                Очистить
+            </button>
+        </div>
+        <div class="col-auto">
+            <a href="{% url 'admin_create_user' %}" class="btn btn-success btn-sm" type="reset">
+                <i class="fa-solid fa-plus"></i>
+                Создать пользователя
+            </a>
+        </div>
+        <div class="col-auto">
+            <a href="{% url 'profile' %}" class="btn btn-secondary btn-sm" type="reset">
+                <i class="fa-solid fa-arrow-left"></i>
+                Назад
+            </a>
+        </div>
+
+      
+    </form>
+
+    <!-- Таблица с пользователями -->
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped table-hover table-sm">
+            <thead class="table-primary">
+                <tr>
+                    <th scope="col">ФИО</th>
+                    <th scope="col">Отделение</th>
+                    <th scope="col">Роль</th>
+                    <th scope="col">Действия</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                    <tr>
+                        <td>{{ user.last_name }} {{ user.first_name }} {{ user.patronymic }}</td>
+                        <td>{{ user.depart.name_dep }}</td>
+                        <td>{{ user.role.name }}</td>
+                        <td>
+                            <!-- Кнопка редактирования -->
+                            <a href="{% url 'admin-edit-user' user.id %}" class="btn btn-sm btn-warning" title="Редактировать">
+                                <i class="fa-solid fa-pencil"></i>
+                            </a>
+                            <!-- Кнопка удаления -->
+                            <a href="{% url 'admin-delete-user' user.id %}" class="btn btn-sm btn-danger" title="Удалить" onclick="return confirm('Вы точно хотите удалить пользователя?')">
+                                <i class="fa-solid fa-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center">Ничего не найдено</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock content %}

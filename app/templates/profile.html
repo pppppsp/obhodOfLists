@@ -1,0 +1,73 @@
+{% extends './base.html' %}
+
+{% block title %}Мой профиль{% endblock title %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <!-- Основная информация о пользователе -->
+        <div class="col-md-8">
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h2 class="card-title mb-4">Профиль {{ request.user.first_name }} ({{ request.user.username }})</h2>
+                    <div class="mb-4">
+                        <p class="fs-4">Имя: {{ request.user.first_name }} {{ request.user.last_name }} {{ request.user.patronymic }}</p>
+                        <p class="fs-4">Статус: 
+                            {% if request.user.is_superuser %}
+                                <span class="text-danger">Администратор</span>
+                                
+                            {% else %}
+                                {{ request.user.role }}
+                            {% endif %}
+                        </p>
+                        <p class="fs-4">Должность: 
+                            {% if st %}
+                                <span class="text-warning">{{ st }}</span>
+                            {% else %}
+                                <span class="text-danger">Нет должности!</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <a href="{% url 'sign' %}" class="btn btn-primary">
+                            <i class="fas fa-signature"></i> Моя подпись
+                        </a>
+                    </div>
+                </div>
+            </div>
+                  <!-- Боковая панель с дополнительными действиями -->
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h4 class="card-title mb-4">Действия</h4>
+                    <div class="d-grid gap-2">
+                        {% if request.user.is_superuser %}
+                                <a href="{% url 'admin:index' %}" class="btn btn-outline-secondary">
+                                    <i class="fas fa-cog"></i> Админка
+                                </a>
+                                <a href="{% url 'admin_post_list' %}" class="btn btn-outline-warning">
+                                    <i class="fa fa-user" aria-hidden="true"></i> Должности
+                                </a> 
+                                <a href="{% url 'user-list' %}" class="btn btn-outline-success">
+                                    <i class="fa fa-user" aria-hidden="true"></i> Пользователи
+                                </a>
+                                <a href="{% url 'admin-create-workaround' %}" class="btn btn-warning">
+                                    <i class="fa fa-user" aria-hidden="true"></i> Создание обходного
+                                </a>
+                              
+                        {% endif %}
+                        
+                        <a href="{% url 'logout' %}" class="btn btn-outline-danger">
+                            <i class="fas fa-sign-out-alt"></i> Выйти
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+            <!-- Список обходных листов -->
+           
+
+  
+    </div>
+</div>
+{% endblock content %}
